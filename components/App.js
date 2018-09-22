@@ -11,22 +11,23 @@ App = React.createClass({
         };
     },
 
-
-    handleSearch: function (searchingText) { // 1.
+    handleSearch: function(searchingText) {  // 1.
         this.setState({
-            loading: true // 2.
+          loading: true  // 2.
         });
-        this.getGif(searchingText, function (gif) { // 3.
-            this.setState({ // 4
-                loading: false, // a
-                gif: gif, // b
-                searchingText: searchingText // c
-            });
-        }.bind(this));
-    },
+        this.getGif(searchingText)
+         .then(response =>
+            this.setState({  // 4
+                loading: false,  // a
+                gif: response,  // b
+                searchingText: searchingText  // c
+              })
+         ).catch(error => console.error('Something went wrong', error));
+        },
 
+      
     
-    getGif: function (searchingText, callback) { // 1.
+    getGif: function (searchingText) { // 1.
         return new Promise(
             function(resolve, reject){
                 const xhr = new XMLHttpRequest();
@@ -39,8 +40,8 @@ App = React.createClass({
                             url: data.fixed_width_downsampled_url,
                             sourceUrl: data.url
                         }
-                        callback(gif);
-                        resolve(this.response);
+                        // callback(gif);
+                        resolve(gif);
                         } else {
                             reject(new Error(this.statusText));
                         }
@@ -51,8 +52,7 @@ App = React.createClass({
                     };
                 xhr.open('GET', url);
                 xhr.send();
-                });
-
+        });
     },
 
     render: function () {
